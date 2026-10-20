@@ -1,0 +1,12 @@
+# Non-secret settings only. Add credentials locally in a protected device file.
+# The interface is a placeholder: verify physical port/VLAN before use.
+nic=REPLACE_WITH_OWN_WAN_INTERFACE
+if-impl=sockraw
+daemonize=0
+max-fail=1
+max-retries=3
+no-auto-reauth=1
+auth-round=1
+stage-timeout=5
+wait-after-fail=60
+# pid-file must be a private path selected on the target router.

@@ -1,0 +1,167 @@
+--- a/if_impl/sockraw/if_impl_sockraw.c
++++ b/if_impl/sockraw/if_impl_sockraw.c
+@@ -27,13 +27,16 @@
+ 
+ #define PRIV ((sockraw_priv*)(this->priv))
+ 
+-static void sockraw_bind_to_if(struct _if_impl* this, short protocol) {
++static RESULT sockraw_bind_to_if(struct _if_impl* this, short protocol) {
+     struct sockaddr_ll sll;
+     memset(&sll, 0, sizeof(sll));
+     sll.sll_family = AF_PACKET;
+     sll.sll_ifindex = PRIV->if_index;
+     sll.sll_protocol = htons(protocol);
+-    bind(PRIV->sockfd, (struct sockaddr*)&sll, sizeof(sll));
++    if (bind(PRIV->sockfd, (struct sockaddr*)&sll, sizeof(sll)) < 0) {
++        return FAILURE;
++    }
++    return SUCCESS;
+ }
+ 
+ RESULT sockraw_set_ifname(struct _if_impl* this, const char* ifname) {
+@@ -74,31 +77,32 @@
+ }
+ 
+ RESULT sockraw_prepare_interface(struct _if_impl* this) {
+-    struct ifreq ifreq;
+-
+-    if ((PRIV->sockfd = socket(AF_PACKET, SOCK_RAW, htons(PRIV->proto))) < 0) {
++    /* Protocol zero receives no frames before the target bind succeeds. */
++    if ((PRIV->sockfd = socket(AF_PACKET, SOCK_RAW, 0)) < 0) {
+         PR_ERRNO("套接字打开失败");
+         return FAILURE;
+     }
+-    sockraw_bind_to_if(this, PRIV->proto);
+-
+-    /* Handle promisc */
+-    memset(&ifreq, 0, sizeof(struct ifreq));
+-    strncpy(ifreq.ifr_name, PRIV->ifname, IFNAMSIZ);
+-
+-    if (ioctl(PRIV->sockfd, SIOCGIFFLAGS, &ifreq) < 0) {
+-        PR_ERRNO("获取网络界面标志信息失败");
++    if (IS_FAIL(sockraw_bind_to_if(this, PRIV->proto))) {
++        PR_ERRNO("Target interface bind failed");
++        close(PRIV->sockfd);
++        PRIV->sockfd = -1;
+         return FAILURE;
+     }
+ 
+-    if (PRIV->promisc)
+-        ifreq.ifr_flags |= IFF_PROMISC;
+-    else
+-        ifreq.ifr_flags &= ~IFF_PROMISC;
+-
+-    if (ioctl(PRIV->sockfd, SIOCSIFFLAGS, &ifreq) < 0) {
+-        PR_ERRNO("混杂模式设置失败");
+-        return FAILURE;
++    /* Leave the interface flags unchanged. Optional capture promiscuity is
++     * a reference-counted membership owned by this socket and released on close. */
++    if (PRIV->promisc) {
++        struct packet_mreq membership;
++        memset(&membership, 0, sizeof(membership));
++        membership.mr_ifindex = PRIV->if_index;
++        membership.mr_type = PACKET_MR_PROMISC;
++        if (setsockopt(PRIV->sockfd, SOL_PACKET, PACKET_ADD_MEMBERSHIP,
++                       &membership, sizeof(membership)) < 0) {
++            PR_ERRNO("Socket capture membership failed");
++            close(PRIV->sockfd);
++            PRIV->sockfd = -1;
++            return FAILURE;
++        }
+     }
+     return SUCCESS;
+ }
+--- a/packet_builder.c
++++ b/packet_builder.c
+@@ -29,14 +29,22 @@
+ /* Original MentoHUST flavor, with function name changed */
+ static uint8_t* hash_md5_pwd(uint8_t id, const uint8_t *md5Seed, int seedLen, const char* password)
+ {
+-	uint8_t md5Src[80];
+-	int md5Len = strlen(password);
+-	md5Src[0] = id;
+-	memcpy(md5Src + 1, password, md5Len);
+-	md5Len++;
+-	memcpy(md5Src + md5Len, md5Seed, seedLen);
+-	md5Len += seedLen;
+-	return ComputeHash(md5Src, md5Len);
++    /* EAP MD5 Value-Size is one byte. Accommodate the complete configured
++     * password and every representable challenge without a stack overrun. */
++    uint8_t md5Src[1 + PASSWORD_MAX_LEN + UINT8_MAX];
++    size_t password_len;
++    size_t md5Len;
++    if (password == NULL || md5Seed == NULL || seedLen <= 0 || seedLen > UINT8_MAX)
++        return NULL;
++    password_len = strnlen(password, PASSWORD_MAX_LEN + 1);
++    if (password_len > PASSWORD_MAX_LEN)
++        return NULL;
++    md5Src[0] = id;
++    memcpy(md5Src + 1, password, password_len);
++    md5Len = 1 + password_len;
++    memcpy(md5Src + md5Len, md5Seed, (size_t)seedLen);
++    md5Len += (size_t)seedLen;
++    return ComputeHash(md5Src, (int)md5Len);
+ }
+ 
+ void builder_set_eth_field(struct _packet_builder* this, int field, const uint8_t* val) {
+@@ -123,9 +131,13 @@
+                 return -1;
+             }
+ 
+-            memmove(_challenge, hash_md5_pwd(PRIV->frame_header.eap_hdr.id[0], PRIV->md5_seed,
+-                                             PRIV->seed_len, PRIV->eap_config->password),
+-                    MD5_CHALLENGE_DIGEST_SIZE);
++            uint8_t* digest = hash_md5_pwd(PRIV->frame_header.eap_hdr.id[0], PRIV->md5_seed,
++                                             PRIV->seed_len, PRIV->eap_config->password);
++            if (digest == NULL) {
++                PR_ERR("Invalid MD5 input length");
++                return -1;
++            }
++            memmove(_challenge, digest, MD5_CHALLENGE_DIGEST_SIZE);
+             /* Extra field: MD5-Value-Size (1 byte) */
+             buffer[_copied_bytes] = MD5_CHALLENGE_DIGEST_SIZE;
+             _copied_bytes += 1;
+--- a/eap_state_machine.c
++++ b/eap_state_machine.c
+@@ -110,7 +110,12 @@
+                                 EAP_PACKET, EAP_RESPONSE,
+                                 IDENTITY, request->header->eap_hdr.id[0],
+                                 get_eap_config());
+-    _response.actual_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    int built_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    if (built_len <= 0 || (size_t)built_len > sizeof(_buf)) {
++        PR_ERR("Packet builder returned an invalid length");
++        return FAILURE;
++    }
++    _response.actual_len = (size_t)built_len;
+     _response.buffer_len = FRAME_BUF_SIZE;
+     _response.content = _buf;
+ 
+@@ -138,7 +143,12 @@
+     PRIV->packet_builder->set_eap_md5_seed(PRIV->packet_builder,
+                                 request->content + sizeof(FRAME_HEADER) + 1, /* 1 = sizeof(MD5-Value-Size) */
+                                 MD5_CHALLENGE_DIGEST_SIZE);
+-    _response.actual_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    int built_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    if (built_len <= 0 || (size_t)built_len > sizeof(_buf)) {
++        PR_ERR("Packet builder returned an invalid length");
++        return FAILURE;
++    }
++    _response.actual_len = (size_t)built_len;
+     _response.buffer_len = FRAME_BUF_SIZE;
+     _response.content = _buf;
+ 
+@@ -163,7 +173,12 @@
+                                 eapol_type, 0,
+                                 0, 0,
+                                 NULL);
+-    _response.actual_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    int built_len = PRIV->packet_builder->build_packet(PRIV->packet_builder, _buf);
++    if (built_len <= 0 || (size_t)built_len > sizeof(_buf)) {
++        PR_ERR("Packet builder returned an invalid length");
++        return FAILURE;
++    }
++    _response.actual_len = (size_t)built_len;
+     _response.buffer_len = FRAME_BUF_SIZE;
+     _response.content = _buf;
+ 

@@ -1,0 +1,20 @@
+{
+  "project": "MiniEAP",
+  "repository": "https://github.com/updateing/minieap",
+  "commit": "983fd4a5851d4a344fab92666c5cdb83f26b2294",
+  "archive_url": "https://codeload.github.com/updateing/minieap/zip/983fd4a5851d4a344fab92666c5cdb83f26b2294",
+  "archive_sha256": "540686fb14d687bc900ec8328e749a6fc0a729cd8fa8ad5c1d778eb42314f05b",
+  "license": "GPL version 3; see the retained upstream license",
+  "patch_sha256": "10ad0509961133d65a8d0f225374f85934f5220ae7ca337bfa45bad8d3ad0cb2",
+  "modified_files": [
+    "if_impl/sockraw/if_impl_sockraw.c",
+    "packet_builder.c",
+    "eap_state_machine.c"
+  ],
+  "network_modules": [
+    "if_impl_sockraw"
+  ],
+  "debug_printer_and_rjv3_not_enabled": true,
+  "toolchain_used_in_anonymized_case": "arm-linux-gnueabi-gcc 11.4.0",
+  "binary_bundled": false
+}

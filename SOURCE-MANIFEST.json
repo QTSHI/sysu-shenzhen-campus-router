@@ -1,0 +1,172 @@
+{
+  "kind": "sanitized_source_distribution_v1",
+  "license": "GPL-3.0",
+  "runtime_credentials_included": false,
+  "device_bound_once_controllers_included": false,
+  "binaries_included": false,
+  "field_identifiers_included": false,
+  "tests": {
+    "python_tests_passed": 8,
+    "c_synthetic_assertions_passed": 103,
+    "c_address_and_cli_guards_passed": true,
+    "minieap_patch_dry_run_passed": true,
+    "live_capture_or_deployment_performed": false
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 181,
+      "sha256": "b531c3b8416e16c767ab4dd0b0b76b9617bddf8a5f57e37e5672fdac547fedfb"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 2462,
+      "sha256": "9008dcd81ba8e3fd7a64800897b39e9fc8f2172386493fa19c7b925888374524"
+    },
+    {
+      "path": "docs/security.md",
+      "bytes": 1449,
+      "sha256": "3b961737024bf2e167f5766ec88f07c2ff2e64aafe57dd4458e6f2dd06cfb52a"
+    },
+    {
+      "path": "docs/troubleshooting.md",
+      "bytes": 2508,
+      "sha256": "7d37072047a88727b4cddfc51e0ebec412e2a25ea25bc0a2f24c58a9b2b84c6f"
+    },
+    {
+      "path": "docs/usage.md",
+      "bytes": 3759,
+      "sha256": "e6ceeb9156801dc0ae775e70221bcb297e9532f17e81b5dd05a404ede74296ff"
+    },
+    {
+      "path": "examples/synthetic.jsonl",
+      "bytes": 523,
+      "sha256": "ba67e3fd562294828e882aedbdbc8df5c0e8ffeb648f01cef6b72e6b8acc9284"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "linux-observer/eapol_metadata.c",
+      "bytes": 4684,
+      "sha256": "4383aef14ea0067c45a189eeb8d36236a3991cbc96c415bacdb0c2959dd1021b"
+    },
+    {
+      "path": "linux-observer/eapol_metadata.h",
+      "bytes": 1148,
+      "sha256": "6878dcd41f42d4f82f51f95074f9db1cdcef0706d8245d3955e9da3417bbd8c2"
+    },
+    {
+      "path": "linux-observer/Makefile",
+      "bytes": 661,
+      "sha256": "fe1b77af95e3021a7612b35d1d958b72080e122fd518bdb43eb05d119437a3af"
+    },
+    {
+      "path": "linux-observer/observer_main.c",
+      "bytes": 6977,
+      "sha256": "3359beb402e0a93cd82ef80747de984b3ee6f40aa66de53855b8b9b0f51277f8"
+    },
+    {
+      "path": "linux-observer/packet_address.h",
+      "bytes": 1044,
+      "sha256": "bd6699af319dfe1ac8b69ef57441fae8aa86b193c16006d978db6115bc796e39"
+    },
+    {
+      "path": "linux-observer/test_cli_guard.c",
+      "bytes": 460,
+      "sha256": "ee10236c6f3d5b315779547fc8f2a00d5d3c0dc583619a2f9079ea4603b72d1c"
+    },
+    {
+      "path": "linux-observer/test_metadata.c",
+      "bytes": 7259,
+      "sha256": "47c7910acdba8f1ff6744ecd5de8e0d6cf2c4990eca10e6e8773858004ebc38e"
+    },
+    {
+      "path": "linux-observer/test_packet_address.c",
+      "bytes": 1498,
+      "sha256": "d0b2e809f956103f8ecdf6a71021f93bd374bb755ce8dc929203d0eeaebbf836"
+    },
+    {
+      "path": "patches/minieap-safety-guards.patch",
+      "bytes": 6761,
+      "sha256": "10ad0509961133d65a8d0f225374f85934f5220ae7ca337bfa45bad8d3ad0cb2"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 339,
+      "sha256": "406f7ce38681082de604b879f9c38db3d022711266d55f83b5962165340c102e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3161,
+      "sha256": "c88e2bb2bf110bce525889644e7cef24e1e80d77f109ab878c5f0abbe001c315"
+    },
+    {
+      "path": "scripts/build_minieap.sh",
+      "bytes": 589,
+      "sha256": "59826f1758d923723160ab6c7d4be20eff2cf5d46b9190054ea120d00e7fe495"
+    },
+    {
+      "path": "scripts/prepare_minieap.py",
+      "bytes": 3365,
+      "sha256": "d5c01853043877eeaf2f75eb24532be52c34f27f11319785044371ae3f6c2265"
+    },
+    {
+      "path": "src/campus_eap/__init__.py",
+      "bytes": 70,
+      "sha256": "7e3c2bd26f4d98766e18250be3aa076fccdb9914036a0f428e9bb84d7b077c47"
+    },
+    {
+      "path": "src/campus_eap/metadata.py",
+      "bytes": 4880,
+      "sha256": "952d28883dd28ae1c8ae58e1b8980cd2320e357a804f45677e0619ea9fcdb8a8"
+    },
+    {
+      "path": "templates/acceptance-checklist.md",
+      "bytes": 1264,
+      "sha256": "48ca0cfc44cff528395efe8adb008da82e8de2867c7f7ef103af5158d31324f6"
+    },
+    {
+      "path": "templates/minieap.public.conf.in",
+      "bytes": 370,
+      "sha256": "f54e8cde873e0df8874a834fcf121d55549bf6d552b4d6659a87fadac9f7d77c"
+    },
+    {
+      "path": "tests/test_metadata.py",
+      "bytes": 2618,
+      "sha256": "de07acabcca70f7bfe2cb0602cbfe70c8783dfc2d42086fbc0009ceddaecafcb"
+    },
+    {
+      "path": "tests/test_templates.py",
+      "bytes": 1215,
+      "sha256": "ebdb694afc7271bb1d756779bd942b7131c4e46d59732809c2180254930108f2"
+    },
+    {
+      "path": "third_party/licenses/MiniEAP-GPL-3.0.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "third_party/minieap-source.json",
+      "bytes": 821,
+      "sha256": "39000163046ac52a84c2b88cda02187289160769fb3cd17ded59a0ea98835289"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "bytes": 1463,
+      "sha256": "9795fd8365efbe845a1d46938a6e7b5bb62e11a1fdba89120ced045345435698"
+    },
+    {
+      "path": "tools/eap_metadata.py",
+      "bytes": 9366,
+      "sha256": "234b41cb229d5f864fbd90b56cabccc76e4f23c497cf560f5b9b329c10160322"
+    },
+    {
+      "path": "VALIDATION.md",
+      "bytes": 1220,
+      "sha256": "f1911bf2b93187f366646fcdbff74f48a373951b7a8a795ea65c3cf75b2c3a26"
+    }
+  ]
+}
