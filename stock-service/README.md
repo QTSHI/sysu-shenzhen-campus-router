@@ -1,60 +1,72 @@
-# 原厂服务的离线生成器
+# 原厂系统上的认证服务
 
-本目录保留服务状态机的四层源码，方便审查正常注销、关机处理和有界恢复策略。入口只在本机生成 shell 文本；不会连接设备、安装服务、执行生成物、发认证或清除失败锁。四个原文件按原字节保存，父模块的 SHA256 校验也保留。
+MiniEAP 负责完成一次认证；这部分代码负责让它作为路由器服务长期运行：开机等待网口就绪，启动一个客户端，成功后保持会话，关机时正常注销，断线后按预算尝试恢复。
 
-| 文件 | 作用 |
+这里保存了现场使用的四层 Python 源码，以及一个将它们组合成 shell 脚本的入口。**目前能直接做的是在本地生成脚本；完整安装到另一台路由器，还缺设备检查、Logoff 等配套部件。**
+
+## 源码怎么读
+
+| 文件 | 在上一层基础上增加什么 |
 | --- | --- |
-| `stock_persistent_runner.py` | 基础监督进程、子进程归属、协议头观察和失败锁存 |
-| `stock_persistent_runner_logoff.py` | 认证前正常 Logoff、30 秒冷却与启动条件等待 |
-| `stock_persistent_runner_shutdown.py` | 正常关机的早期 K01 钩子，先停止自己的会话再注销 |
-| `stock_persistent_runner_rolling_candidate.py` | v2 状态格式与滚动恢复预算；文件名保留原审查名称 |
+| `stock_persistent_runner.py` | 管理唯一客户端，观察认证结果，记录失败 |
+| `stock_persistent_runner_logoff.py` | 启动前正常注销旧会话，冷却 30 秒并等待条件就绪 |
+| `stock_persistent_runner_shutdown.py` | 通过 K01 关机钩子，按顺序停止客户端并注销 |
+| `stock_persistent_runner_rolling_candidate.py` | v2 状态和一定时间内的恢复次数预算 |
 
-这些 Python 源码及新增入口按根目录 GPL v3 许可分发。MiniEAP 自身的来源和许可见 [`THIRD_PARTY.md`](../THIRD_PARTY.md)。本目录没有捆绑第三方可执行文件。
+文件名保留了开发时的层次。后面的文件引用前面的实现，生成入口会核对四个文件的原字节摘要，所以修改源码后也需要同步对应摘要。
 
-## 适用假设与缺少的部件
+## 为什么不能只上传 runner.sh 就完成部署
 
-这是固定硬件布局的参考实现，不能直接当作通用安装器。它假设有线 WAN 接口是 `eth0.1`，服务目录为 `/data/usr/sysu-campus-auth/service`，RAM 状态目录为 `/tmp/sysu-campus-service`，并依赖对应固件的 BusyBox、Lua、OpenSSL、ubus、`/proc` 与 sysfs 行为。
+脚本按本次原厂环境编写，使用以下位置：
 
-生成物还要求以下外部部件；本目录均不提供：
+- WAN：`eth0.1`
+- 程序和配置：`/data/usr/sysu-campus-auth/service`
+- 临时状态：`/tmp/sysu-campus-service`
 
-- 已审查的 `gate.lua`，用于检查硬件、桥隔离、管理入口、安全配置和客户端归属。
-- MiniEAP、协议头观察器及与其真实文件匹配的 SHA256。
-- 只在本机输入并安全保存的认证配置。仓库没有可用账号、密码、私钥或现场认证配置。
-- 正常 Logoff 工具、文件 seal、权限和受控启动环境。
+它调用原厂固件的 BusyBox、Lua、OpenSSL、ubus、`/proc` 和 sysfs，同时还依赖：
 
-Logoff 层仍保留固定的 `LOGOFF_SHA`，表示其原审查构建身份。这个工具没有随仓库分发；公开的协议头观察器也不是 Logoff 工具。复用时需要针对自己的接口和硬件重新审查依赖并固定摘要，不能用空实现或关闭校验来跳过这一条件。这里提供的输入摘要只用于 MiniEAP 和观察器，不会自动适配上述缺少的部件。
+| 配套部件 | 用途 | 仓库中的状态 |
+| --- | --- | --- |
+| `gate.lua` | 检查设备、WAN/LAN 分离、管理入口及进程归属 | 待通用化整理 |
+| MiniEAP、协议头观察器 | 认证、记录请求与结果 | 提供构建源码，需要自行编译 |
+| Logoff 工具 | 在接口上发送正常注销帧 | 未收录；源码里固定了现场构建的 `LOGOFF_SHA` |
+| 账号配置、文件 seal、安装和启动配置 | 保存凭据、确认程序版本、接入开关机流程 | 需要针对设备准备 |
 
-## 仅生成文本
+`render_runner.py` 接受的两个摘要只对应 MiniEAP 和观察器。补齐其余部件后，还要让实际文件、路径、摘要和启动顺序相互对应。协议头观察器与 Logoff 工具的用途不同，不能互相替代。
 
-无参数和 `--help` 只显示帮助：
+## 生成脚本
 
-```text
+先查看参数：
+
+```sh
 python stock-service/render_runner.py --help
 ```
 
-显式选择生成 runner 或 shutdown，并把两个占位值替换为自己构建文件的 64 位小写十六进制摘要：
+准备好自己构建的两个文件摘要后，替换下面的占位符：
 
-```text
-python stock-service/render_runner.py --render --artifact runner --minieap-sha256 YOUR_64_HEX_DIGEST --observer-sha256 YOUR_64_HEX_DIGEST --output runner.sh
-python stock-service/render_runner.py --render --artifact shutdown --minieap-sha256 YOUR_64_HEX_DIGEST --observer-sha256 YOUR_64_HEX_DIGEST --output shutdown.sh
+```sh
+python stock-service/render_runner.py --render --artifact runner --minieap-sha256 YOUR_MINIEAP_SHA256 --observer-sha256 YOUR_OBSERVER_SHA256 --output runner.sh
+python stock-service/render_runner.py --render --artifact shutdown --minieap-sha256 YOUR_MINIEAP_SHA256 --observer-sha256 YOUR_OBSERVER_SHA256 --output shutdown.sh
 ```
 
-输出文件必须不存在，已有文件不会被覆盖；省略 `--output` 时仅向标准输出写源码。生成和语法检查都不能证明某台路由器兼容，也不代表已经认证或联网。
+摘要格式为 64 位小写十六进制。输出文件名要用新的；省略 `--output` 时，源码会打印到终端。这一步生成文本，不会连接路由器。
 
-## 状态与恢复策略
+## 断线以后怎样处理
 
-v2 状态保留真实累计 `attempt` 和 `recovery_used`，并增加最近窗口计数、下一次允许恢复的 uptime 和预算暂停标志。旧 v1 parser 会拒绝 v2，不能把累计计数截断后交给旧工具。监控器、验收器与状态 parser 必须同时使用匹配版本。
+成功认证后保持原客户端运行，观察日志换段也不会重启认证。只有已经成功过的会话，才会进入链路恢复流程。
 
-对于已成功会话的链路恢复，参考策略在 1800 秒内最多预留两次恢复工作流，并要求距离上次实际认证进程启动至少 300 秒。预算用尽时进入 `network-paused`，等待预算恢复；EAP Failure、认证超时或未知的尝试仍持久锁存，不会自动清锁或无限重启。预算属于同一 boot，不能推导为跨重启的永久状态。
+v2 的预算是：**同一次开机内，任意连续 30 分钟内最多预留两次恢复流程，距离上次实际认证启动至少 5 分钟**。预算耗尽时进入 `network-paused`，等窗口恢复。明确的 EAP Failure、认证超时和结果不明的尝试会留下故障记录并停止，留给使用者排查。
 
-这一策略不设置 LAN 设备数上限，也不修改 Wi-Fi 广播、无线隔离、QoS 或带宽限制。它不能证明无限设备容量、物理拔插恢复或 24 小时稳定性。实际已测范围见 [`docs/field-results.md`](../docs/field-results.md)。
+状态中的 `attempt`、`recovery_used` 是累计值，另外的字段记录当前窗口次数和下次允许恢复的时间。读取它们的监控程序也需要使用 v2 格式；v1 parser 不兼容。
 
-现有客户端的父 PID 不能交给新监督进程。本目录不提供运行中的 PID 接管或安装入口；需要迁移时应另行审查备份、版本配套、正常注销、独立管理通路和回滚方案。
+现场已经测试普通重启后自动认证。拔插 WAN 后的恢复仍需实测，完整结果见[现场记录](../docs/field-results.md)。这套预算只管理校园认证，LAN 设备数量由无线、DHCP 和路由配置决定。
 
-## 离线测试
+## 修改和测试
 
-```text
+```sh
 python -m unittest discover -s stock-service -p "test_*.py" -v
 ```
 
-测试核对四层精确源码摘要、生成结果和 v2 累计计数；系统有 `sh` 时仅执行 `sh -n` 语法检查，不运行 shell 内容。没有网络或设备测试。
+测试检查源码摘要、生成内容和 v2 累计计数；系统有 `sh` 时还会做 shell 语法检查。移交正在运行的会话时，要通过正常注销和重新启动完成，新进程不能直接继承旧客户端的父进程关系。
+
+本目录采用根目录的 GPL v3 许可。MiniEAP 来源见 [`THIRD_PARTY.md`](../THIRD_PARTY.md)。

@@ -1,74 +1,58 @@
-# 中山大学深圳校区宿舍有线网：RD03v2 原厂方案
+# 用 AX3000T 接入中山大学深圳校区宿舍网
 
-基于 **2026年10月、中山大学深圳校区学生宿舍某已测墙口** 的独立实测，整理小米 AX3000T **RD03v2 / 原厂 2.0.28** 的接入路径、协议头诊断工具、MiniEAP构建补丁和认证服务生成器。这个案例保留了小米原厂系统，**没有刷成OpenWrt**；其他墙口、硬件版本和固件仍需各自核验。
+把宿舍墙口接到路由器，让手机、电脑连自己的 Wi-Fi 上网，日常不用再开着电脑跑锐捷——这是这次改造的目标。
 
-本仓库经过脱敏，包含可审查源码、非秘密模板、构建材料和中文教程。现场凭据、私人无线名称、设备地址、密钥、备份、抓包正文、固件及二进制安装包均不在仓库中。历史单次安装控制器绑定私人现场，因此也没有收录。
+这套方案在深圳校区宿舍的一台 **小米 AX3000T RD03v2** 上接通了。系统保留 **小米原厂 2.0.28**，校园认证交给 **MiniEAP**；路由器拿到校园网地址后，再通过 NAT 把网络分给自己的设备。这里的“改造”是给原厂系统增加认证服务，没有刷 OpenWrt。
 
 ```text
-校园墙口 ── 校园WAN（MiniEAP认证 → DHCP）── NAT ── 私人LAN / 双频Wi-Fi ── 终端
+宿舍墙口 → 路由器 WAN → MiniEAP 认证、获取 IP → 私人 Wi-Fi / LAN → 手机、电脑
 ```
 
-电脑只在准备、诊断和验收时使用；日常由路由器独立认证。校园WAN不桥入私人LAN。
+仓库整理了这次接入过程、诊断工具、MiniEAP 构建材料和认证服务源码。**从原厂新机开始的完整安装流程还没整理完**，其中设备检查程序 `gate.lua`、Logoff 工具和安装步骤仍需补齐。现阶段可以直接使用下面的诊断和构建工具，移植整套服务则需要自己补上这些部件。
 
-## 先选择阅读路径
+## 先看哪一篇
 
-- **想知道怎么做、做到哪里**：阅读[深圳校区完整路线](docs/shenzhen-campus.md)和[匿名现场结果](docs/field-results.md)。
-- **想复用公开代码**：阅读[构建与工具用法](docs/usage.md)、[服务离线生成器](stock-service/README.md)，先离线测试，再核验自己的设备条件。
-- **想改善网速和多人体验**：阅读[原厂与OpenWrt取舍及三项改善](docs/network-experience.md)。
-- **想核对项目结论**：运行 `python tools/site_profile.py --json`，读取[匿名现场档案](profiles/sysu-shenzhen-rd03v2.json)。此命令不连接设备，只检查档案内部一致性。
+- **想知道怎么接通的**：[深圳校区接入过程](docs/shenzhen-campus.md)。从电脑锐捷验证讲到一根网线的接法、路由器认证和日常使用。
+- **想排查自己的线路**：[工具使用与构建](docs/usage.md)。包含 Windows 协议头采集、Linux 观察器和 MiniEAP 构建。
+- **想看认证服务怎么写**：[服务源码说明](stock-service/README.md)和[运行流程](docs/architecture.md)。
+- **想改善 Wi-Fi、延迟和速度**：[原厂与 OpenWrt 的取舍、三种改善办法](docs/network-experience.md)。
 
-公开项目是**原创实测教程与源码工具箱，不是一键刷机或一键安装包**。现场使用的设备绑定安装器、`gate.lua`及Logoff辅助产物没有通用化收录；仅生成`runner.sh`不能完成整套现场部署。协议采集器、离线解析器、构建准备脚本和服务文本生成器可分别按文档使用。
+## 这次实际做到了什么
 
-## 已验证范围
+| 项目 | 结果 |
+| --- | --- |
+| 路由器独立接入 | MiniEAP 认证成功，取得 IP、网关和 DNS；手机、电脑通过私人 Wi-Fi 上网 |
+| 认证方式 | 该墙口可用 EAP-MD5，MiniEAP 没有启用 `rjv3` 插件 |
+| 开机自动连接 | 修正关机顺序后，一次普通重启能自动认证并恢复上网 |
+| 速度 | 凌晨短测：单连接下载约 123Mbps，四连接合计约 218Mbps，上传合计约 53Mbps；平均公网延迟约 18ms |
+| 连续观察 | 记录了约 6 小时 35 分钟，396 次双站探测全部成功；随后电脑上的观察程序退出，24 小时测试中断 |
 
-| 项目 | 匿名现场结果 |
-|---|---|
-| 标准 MiniEAP、接收方向 Identity/MD5 与 Success | 已通过 |
-| 路由器 DHCP、DNS、实际源路由及校内/公网 HTTPS | 已通过 |
-| 正常关机顺序修复后，一次普通重启自动恢复 | 已通过 |
-| 凌晨 5GHz 短测速样本 | 单连接下载123.077Mbps，四连接下载合计217.835Mbps、上传合计52.545Mbps；公网平均17.6ms |
-| 上午完整小流量样本 | 单连接下载74.212Mbps，四连接下载合计54.329Mbps、上传合计12.082Mbps；不能据此证明账号限速 |
-| 滚动恢复 v2 普通启动 | 已通过；实际物理断线恢复仍待验 |
-| 物理 WAN 拔插及主动 DHCP 续租 | 待验 |
-| 四台设备同时活跃、校园侧终端限制 | 待验；不承诺无限设备 |
-| 24 小时稳定性 | 电脑观察进程异常退出；约6小时35分钟，396/396双站探测及80/80服务样本通过；24小时未完成，周期跟进已停止 |
-| 本仓库重新整理的 Windows 采集前端 | 离线解析测试通过，尚未在设备上重跑 |
+上午测速明显低于凌晨，原因还没定位。断电重开、拔插 WAN 后恢复、局域网设备发现和多台设备同时高负载，也留待后续测试。详细数据和测试方式放在[现场记录](docs/field-results.md)。
 
-短测速与此前不同时间的直连基线不构成严格对比，也不能推导千兆外网或没有瓶颈。Linux 观察器的核心曾实机运行；重新整理后的MiniEAP构建产物和Windows前端尚未逐一现场复验。接收方向可见，不等于保存了完整双向握手。
+## 先运行工具
 
-本墙口已验证标准MiniEAP、未启用`rjv3`的运行方式；不能据此断言其他宿舍或校区不需要扩展。当前持久服务按单账号、单认证进程设计，不支持直接多开形成多WAN。普通重启成功也不等于物理断电恢复已测试。
+在仓库根目录执行，需要 Python 3.9 或更新版本：
 
-## 快速入口
-
-- [架构和生命周期](docs/architecture.md)
-- [匿名现场结果与使用建议](docs/field-results.md)
-- [原厂认证服务的离线生成器](stock-service/README.md)
-- [使用与构建](docs/usage.md)
-- [故障排查](docs/troubleshooting.md)
-- [隐私、安全与恢复边界](docs/security.md)
-- [学校指引、南校园相关方案与引用](REFERENCES.md)
-- [第三方来源和许可](THIRD_PARTY.md)
-- `templates/minieap.public.conf.in`：只有非秘密选项
-- `tools/eap_metadata.py`：被动 Windows Npcap 采集/离线验证
-- `linux-observer/`：23 字节前缀的被动 Linux 观察器
-- `patches/`、`scripts/`：固定 MiniEAP 源码准备及构建
-
-```text
-python -m unittest discover -s tests -v
+```sh
 python tools/eap_metadata.py --help
+python tools/eap_metadata.py --validate examples/synthetic.jsonl
 python tools/site_profile.py --json
 ```
 
-默认帮助和测试不访问网卡、不安装驱动、不发认证。仓库没有一键刷机、自动清锁、设置账号或现场部署入口。程序只输出严格数字/枚举协议头；不要把真实采集结果提交到 Git。
+第一条查看采集工具用法，第二条解析合成报文示例，第三条读取并检查匿名现场档案。这三条命令可以先在本地运行；真正采集有线认证流量，还需要 Windows 上的 Npcap，步骤见[使用说明](docs/usage.md)。
 
-## 设计原则
+代码按功能分在这些目录：
 
-先区分客户端兼容、认证、DHCP、DNS、路由与无线管理问题。凭据仅由本人在本机受限流程输入，运行配置留在路由器受限目录；命令行和日志不承担密码传递。认证失败后锁存，未知尝试不自动重拨。校园账号或端口侧限制需要实证，NAT 并不保证消除限制。
+| 目录 | 内容 |
+| --- | --- |
+| `tools/`、`src/` | Windows 采集前端、协议头解析器、现场档案检查 |
+| `linux-observer/` | 路由器侧的被动 EAPOL 观察器 |
+| `patches/`、`scripts/` | 固定版本 MiniEAP 的补丁和构建脚本 |
+| `stock-service/` | 单实例认证、正常注销、关机处理和有限重试的服务源码 |
+| `templates/` | 认证配置模板，使用时填写自己的配置 |
 
-稳定私人 LAN 与校园上游访问是两项不同测试。广播/组播互通需要实际下游设备验证；不要为“加速”无依据地关闭 WMM、改组播转换、无线隔离或硬件加速。详见架构和排障文档。
+## 和南校园项目有什么关系
 
-项目源码按 GPL v3 分发，全文见 [LICENSE](LICENSE)。MiniEAP 保留原项目的 GPL v3 许可和作者归属，Npcap 需使用者另从官网取得并遵循其许可。
+[RenAhsAcme/SYSU-Network-Solution](https://github.com/RenAhsAcme/SYSU-Network-Solution)介绍了广州南校园的 OpenWrt 方案。这次则记录深圳校区宿舍、RD03v2 原厂系统的做法，文档和工具独立编写。两套方案的系统、插件配置和服务管理方式有区别，见[来源与对照](REFERENCES.md)。
 
-## 相关方案
-
-[RenAhsAcme/SYSU-Network-Solution](https://github.com/RenAhsAcme/SYSU-Network-Solution)明确以广州南校园为背景，主要使用OpenWrt。本项目独立记录深圳现场的原厂方案，不是其已验证的深圳移植分支，也没有复制其文档、图片或脚本。两者平台、认证扩展设置、服务生命周期和已验证网络能力不同，详见[来源与对比](REFERENCES.md)。
+学校官方资料、第三方代码与许可分别见 [REFERENCES.md](REFERENCES.md)、[THIRD_PARTY.md](THIRD_PARTY.md)。项目采用 [GPL v3](LICENSE)。账号、密钥和备份的保存建议放在[安全说明](docs/security.md)，常见问题见[故障排查](docs/troubleshooting.md)。

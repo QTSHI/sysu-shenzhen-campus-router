@@ -1,7 +1,7 @@
 {
   "kind": "sanitized_source_distribution_v1",
   "edition": "sysu-shenzhen-rd03v2-stock",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "GPL-3.0",
   "runtime_credentials_included": false,
   "device_bound_once_controllers_included": false,
@@ -16,7 +16,11 @@
     "c_synthetic_assertions_historically_passed": 103,
     "c_address_and_cli_guards_historically_passed": true,
     "minieap_patch_dry_run_historically_passed": true,
-    "c_and_minieap_checks_reexecuted_in_this_revision": false
+    "c_and_minieap_checks_reexecuted_in_this_revision": false,
+    "documentation_only_revision": true,
+    "code_test_results_inherited_from": "v0.2.1; implementation unchanged",
+    "documentation_local_links_checked": 38,
+    "documented_offline_commands_checked": 4
   },
   "field_observation": {
     "result": "interrupted",
@@ -38,13 +42,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 5908,
-      "sha256": "da2447e18f03fef774899e5b0f5bdfa53900f1f1c722b34f239059a2d4b0d796"
+      "bytes": 4123,
+      "sha256": "03d8e9b6b6e6ded679682dc3e5c9a87a0e142d204e18f128ad21291889075233"
     },
     {
       "path": "REFERENCES.md",
-      "bytes": 3513,
-      "sha256": "746f0cbedc90b9320fd5f5d54945ce483655d8e988c3e61521d6a122306f33ce"
+      "bytes": 2835,
+      "sha256": "3498b3b17034b8c7407a9972d9ae8997afee9488f70f502b9930870a6380dbec"
     },
     {
       "path": "THIRD_PARTY.md",
@@ -53,23 +57,23 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 2452,
-      "sha256": "79a2a8f23c4353b789f6b0452eeda274f841312e99e8260f866df81632e6ecdd"
+      "bytes": 1699,
+      "sha256": "010544d13db77d11402da8d240577cc2c4a8d0cdfd73f29a8575abf70986dc6d"
     },
     {
       "path": "docs/architecture.md",
-      "bytes": 2468,
-      "sha256": "c5cd45088830940320074650f1cb05c0f84baea5a2d8d110f84a62fa870588c4"
+      "bytes": 3201,
+      "sha256": "9964f3d2e4da17bf9a167e9641b3e70ac322224d0236f592627a26569c446901"
     },
     {
       "path": "docs/field-results.md",
-      "bytes": 5697,
-      "sha256": "150284439050cfedd184d07a79102118361d427d01ef465ba030096b72e1695a"
+      "bytes": 3912,
+      "sha256": "afeabfb2479ce261af41f9071691b857c110296ce5975fe07dfc105ab9dc49c5"
     },
     {
       "path": "docs/network-experience.md",
-      "bytes": 5117,
-      "sha256": "7d64fc7332622838d31c9c7bc8a47827f51d0da5e7df2b506c8fadd29b893719"
+      "bytes": 5366,
+      "sha256": "475da7f88379d4af25a80b5a69144608cbd08cc22f483bc5ab60c4f5a9ac668d"
     },
     {
       "path": "docs/security.md",
@@ -78,18 +82,18 @@
     },
     {
       "path": "docs/shenzhen-campus.md",
-      "bytes": 10042,
-      "sha256": "4d3b5044570c4a183ee433ce8397780fc6321864d142e2846385fff79d30a164"
+      "bytes": 9170,
+      "sha256": "f292dd9153d432585b2ba669ad9a1f28a4363b5eb6866295777d7e2e1369ff31"
     },
     {
       "path": "docs/troubleshooting.md",
-      "bytes": 3680,
-      "sha256": "e29a5cbfb5f897e50f994a01fa67c43d084d54de6b76a088f04b33b91ac4944a"
+      "bytes": 3818,
+      "sha256": "ae0c7dc01f95eb094f2c3bd91a892fa4271fcdd0a598ac7cf459f889f764c238"
     },
     {
       "path": "docs/usage.md",
-      "bytes": 3759,
-      "sha256": "e6ceeb9156801dc0ae775e70221bcb297e9532f17e81b5dd05a404ede74296ff"
+      "bytes": 4736,
+      "sha256": "d33ac8e58faa2b81fc3bf2d49d45e91390e0c49139b160b660f8e37001780253"
     },
     {
       "path": "examples/synthetic.jsonl",
@@ -149,7 +153,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 348,
-      "sha256": "c51686246a6410e97d8d3f7af2828e94b709bd72777b0213578a79366711094a"
+      "sha256": "50ffd16f477b0a7340e161692cca9888b60aee016f6a905cb1e7c0e51a2fb386"
     },
     {
       "path": "scripts/build_minieap.sh",
@@ -173,8 +177,8 @@
     },
     {
       "path": "stock-service/README.md",
-      "bytes": 4473,
-      "sha256": "2adc1a2ce89cca39be201a3013147299208f5789a270a94ecd5bb55f288a9d90"
+      "bytes": 4370,
+      "sha256": "47333bf22bd1a95d5e4469065ddd08311aaa33361c0d6e75fc8230c05b1b6d74"
     },
     {
       "path": "stock-service/render_runner.py",

@@ -1,53 +1,85 @@
-# 使用和构建
+# 工具使用与构建
 
-## 离线测试
+在仓库根目录运行以下命令。Python 工具需要 **Python 3.9+**，无需安装第三方 Python 包；Windows 采集另外依赖 Npcap，Linux 构建需要编译工具链。
 
-需要 Python 3.9 或更新版本，无 Python 第三方依赖：
+## 先跑一个示例
 
-```text
-python -m unittest discover -s tests -v
+```sh
 python tools/eap_metadata.py --validate examples/synthetic.jsonl
+python tools/site_profile.py --json
 ```
 
-示例全部是合成字段，没有现场报文、账号、设备地址或密钥。JSONL 验证器只接受一个连续观察段，拒绝额外字段、重复键、布尔冒整数和未完成行。服务分段日志应分段验证，不能重排为一个虚构握手。
+第一条检查合成的认证协议头示例；第二条检查 `profiles/sysu-shenzhen-rd03v2.json` 的字段和结论是否一致。后者不会访问路由器，适合阅读本次实测记录时对照使用。
 
-## Windows 被动采集
+运行项目已有测试：
 
-先阅读 [Npcap 官方开发说明](https://npcap.com/guide/npcap-devguide.html)。另从官网取得匹配架构的 Npcap，核验安装器签名，使用正常安装器；本仓库不附带安装包、驱动或静默安装逻辑。采集工具只查询已经运行的驱动，不请求安装/启动权限。管理员授权与认证密码必须在本机处理。
-
-```text
-python tools/eap_metadata.py --list
-python tools/eap_metadata.py --interface ADAPTER_GUID --seconds 30 --output local-capture.jsonl
+```sh
+python -m unittest discover -s tests -v
+python -m unittest discover -s stock-service -p "test_*.py" -v
 ```
 
-`ADAPTER_GUID` 必须替换为本人真实物理有线接口的 GUID。连接路由器 LAN 时，不能据该处观察结果推断路由器 WAN 的认证。Windows 前端只加载系统 Npcap 目录，非混杂模式，内核过滤 EAPOL，读取上限 32 字节以兼容两层 VLAN；内存前缀不落地。输出仅为 11 个头部字段，方向记为 `unknown`，不推断发送方身份。
+## Windows：采集认证协议头
 
-输出文件必须不存在；工具不覆盖已有文件。不要将本机日志提交到仓库。新整理的前端尚未进行现场采集验收，当前只验证离线解析和边界。
+这个工具用来回答“墙口发来了哪种 EAP 请求、认证有没有返回 Success”。它与官方锐捷客户端配合：锐捷负责认证，工具只在旁边观察。
 
-## Linux 被动观察器
+1. 从 [Npcap 官网](https://npcap.com/)下载安装器，确认数字签名有效、发布者为 **Nmap Software LLC**，再用图形安装器安装。
+2. 先列出接口：
 
-```text
+   ```sh
+   python tools/eap_metadata.py --list
+   ```
+
+3. 找到实际接墙线的物理有线网卡，记下它的 GUID。把下面的 `ADAPTER_GUID` 换成这个值：
+
+   ```sh
+   python tools/eap_metadata.py --interface ADAPTER_GUID --seconds 30 --output local-capture.jsonl
+   ```
+
+4. 在这 30 秒内，让现有锐捷客户端进行一次“断开 → 认证”。密码只在锐捷窗口输入。采集结束后查看生成的 JSONL。
+
+输出包含 EAPOL/EAP 的类型、长度、编号等 11 个头部字段，方向标为 `unknown`。内核过滤 EAPOL，程序最多读 32 字节前缀以处理两层 VLAN；账号和认证正文不会写入输出。文件名要用新的，工具会拒绝覆盖已有文件。完整依赖说明见 [Npcap 开发文档](https://npcap.com/guide/npcap-devguide.html)。
+
+接口选择很重要：电脑接路由器 LAN 时，看到的是 LAN 流量，观察校园认证要选实际参与认证的那一侧。`--list` 显示的 Ethernet 类型也可能是虚拟接口，应结合 Windows 网卡名称核对。整理后的 Windows 前端目前通过了离线测试，尚未重做现场采集测试。
+
+## Linux：构建协议头观察器
+
+在 Linux 下执行：
+
+```sh
 make -C linux-observer test
 make -C linux-observer
 linux-observer/build/eapol-observer --help
 ```
 
-Linux 实际采集需要已明确选定的本人接口与相应权限。显式 `--interface` 和 `--seconds` 才打开套接字；默认帮助不采集。它只读取 23 字节前缀，不保存 PCAP，不发包、不改混杂模式。原 ARM/Linux 组合中接收方向可见性获实证，发送方向未证实，不能据 TX 为零判断没有应答。该版本不解析 VLAN 标签；若目标需要 VLAN 采集，需另做有界实现和测试。
+产物是 `linux-observer/build/eapol-observer`。先看帮助，再指定自己的接口和观察时间；采集需要相应权限。
 
-Linux 4.4 的包地址长度可能为 18 字节而非结构体的 20 字节；实现检查字段边界和声明地址长度，而非固定等于 `sizeof`。这个修复保留了 family、ifindex、protocol 的一致性验证。
+观察器只读取 23 字节前缀，保存头部元数据。在本次 ARM/Linux 环境中，它能看到服务器发来的请求；发送方向的可见性还没确认，所以只有接收记录也不表示客户端没有应答。这个版本不解析 VLAN 标签。
 
-## 固定 MiniEAP 源码与补丁
+实现中还处理了 Linux 4.4 的包地址长度差异：返回长度可能是 18 字节，而结构体占 20 字节。相关说明见[运行流程](architecture.md)。
 
-使用固定提交、原始 ZIP 摘要和本地补丁，参见 `third_party/minieap-source.json`。准备工具只下载/校验/展开公开源码及打补丁，不构建、不安装、不运行认证：
+## 构建本次使用的 MiniEAP
 
-```text
+这部分在 Linux 中进行，需要 `patch`、`make` 和 **`arm-linux-gnueabi-gcc`**。构建脚本默认使用这个交叉编译器；通过 `CC` 可以指定另一个兼容工具链。
+
+```sh
 python scripts/prepare_minieap.py --prepare
-# 可选：--archive PATH_TO_THE_EXACT_UPSTREAM_ZIP
 sh scripts/build_minieap.sh
 ```
 
-需要 `patch`、`make` 和相应交叉编译器。准备目录必须不存在，避免覆盖未知历史；源码放在 Git 忽略的 `build/`。脚本不复制上游演示认证配置。构建只启用 `if_impl_sockraw`，关闭 debug/printer/rjv3 和额外字符集功能，目标是 ARM soft-float 静态程序。匿名现场使用过 GNU ARM 交叉编译器 11.4.0；不同工具链结果不保证字节级相同，必须自行检查 ELF、ABI、动态依赖及设备兼容性。
+第一步下载固定提交的源码，核对摘要并应用本地补丁；第二步编译。产物路径为：
 
-构建成功不代表可以部署到任何 AX3000T。先核实硬件、ABI、端口、固件和恢复条件。本仓库不提供刷机或开 root 的自动入口。
+```text
+build/minieap-983fd4a5851d4a344fab92666c5cdb83f26b2294/minieap
+```
 
-模板 `templates/minieap.public.conf.in` 没有用户名和密码。本人实际配置应仅在设备受限目录中由本机安全流程生成，父目录 `0700`、文件 `0600`；不要把凭据作为 CLI 参数、环境示例或 CI secret 测试输入。公开模板不能直接进行认证。
+已有对应源码 ZIP 时，可在准备步骤加 `--archive PATH_TO_ZIP`，避免重新下载。准备目录已存在时脚本会停止，此时先查看里面的内容。
+
+这套构建面向本次 RD03v2 的 **ARMv7 / soft-float / 静态链接** 环境，只启用 `if_impl_sockraw`，关闭 `rjv3`、debug/printer 和额外字符集功能。源码版本及摘要在 [`third_party/minieap-source.json`](../third_party/minieap-source.json)。部署到自己的设备前，需要检查产物的 ELF、ABI 和依赖是否与目标匹配。
+
+## 从构建走到部署
+
+MiniEAP 编译完成后，下一步是填写配置、放置程序并接入原厂启动流程。配置模板在 [`templates/minieap.public.conf.in`](../templates/minieap.public.conf.in)，服务代码在 [`stock-service/`](../stock-service/README.md)。
+
+这一段还没有通用安装器：服务依赖的 `gate.lua`、Logoff 工具、文件摘要及启动配置，需要结合目标设备补齐。具体缺哪些、生成器怎样使用，见[服务说明](../stock-service/README.md)。
+
+账号和密码留在设备上的受限配置文件中，目录权限 `0700`、文件权限 `0600`。分享排障结果时使用脱敏信息，本地采集结果和私人配置不要提交到 Git。

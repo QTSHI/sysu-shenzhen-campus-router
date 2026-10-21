@@ -1,39 +1,37 @@
-# 来源、适用范围与相关项目
+# 参考资料与相关项目
 
-核对日期：2026-10-21。学校文件提供背景与官方操作要求；本项目的具体墙口协议、硬件和运行结果以独立现场证据为准。
+整理日期：2026-10-21。
 
-## 学校官方资料
+## 学校的接入说明
 
-1. [个人用户有线网络接入](https://inc.sysu.edu.cn/service/wired-network-access)：学生使用NetID与认证客户端，IPv4自动获取；客户端下载入口以学校网页为准。本项目不重新分发官方客户端安装包。
-2. [学生锐捷认证客户端FAQ](https://inc.sysu.edu.cn/cat/152)：指出Windows原生有线802.1X可能与锐捷争用；认证成功后还需成功获取DHCP地址。本文只引用相关诊断原则，不把历史FAQ中的全局重置、驱动卸载或关闭安全防护当作常规步骤。
-3. [学生搬迁校园网络指引](https://inc.sysu.edu.cn/article/1459)，2023-07-05：当时将深圳学生宿舍归入锐捷接入环境，与南校园同类。这是历史分类，不证明今天任一墙口的开放状态、EAP方法或带宽配额。
+- [个人用户有线网络接入](https://inc.sysu.edu.cn/service/wired-network-access)：学生有线接入流程、Windows 客户端下载、NetID 认证和自动获取 IP 的要求。
+- [锐捷客户端 FAQ](https://inc.sysu.edu.cn/cat/152)：Windows 原生有线 802.1X 与锐捷冲突、认证后获取 DHCP 地址等问题的说明。
+- [学生搬迁校园网络指引](https://inc.sysu.edu.cn/article/1459)，2023-07-05：当时把深圳学生宿舍与南校园归为锐捷接入环境。本项目据此选择官方客户端起步，再用当前墙口的记录判断认证方法。
 
-## 广州南校园相关项目
+## 南校园的 OpenWrt 方案
 
-可作对照的南校园项目是[RenAhsAcme/SYSU-Network-Solution](https://github.com/RenAhsAcme/SYSU-Network-Solution)。作者README明确说明以广州南校园的学生接入环境为基础。
+[RenAhsAcme/SYSU-Network-Solution](https://github.com/RenAhsAcme/SYSU-Network-Solution)以广州南校园为背景，介绍了通过 OpenWrt 接入校园网的做法。它与本项目最直接的差别是：
 
-本次只读核对版本为`be6990d3e34e39811db622aed32e8d088db9e8cb`：
-
-- [固定版本README](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/README.md)
-- [软件包Makefile](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/Makefile)
-- [GPLv3许可证](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/LICENSE)
-- [另附的CC BY-NC-SA 4.0许可证](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/LICENSE_CC)
-
-两种许可文件并存，已读说明没有给出明确逐文件映射。本项目只链接并原创概括技术差异，没有复制其文档、图片或脚本，也不将其双许可解释为本项目许可。
-
-| 方面 | 南校园相关项目 | 深圳现场项目 |
+| | 南校园项目 | 本次深圳方案 |
 | --- | --- | --- |
-| 系统路线 | OpenWrt及其软件包、服务管理 | RD03v2原厂2.0.28上的定制服务 |
-| 认证方式 | 文档示例启用MiniEAP的rjv3插件 | 本墙口标准MiniEAP、未启用rjv3实测成功 |
-| 生命周期 | OpenWrt服务管理示例 | 单实例归属检查、正常Logoff、失败停止、有限恢复 |
-| 网络能力 | 作者南校园环境中的独立结论 | 仅采用深圳现场已验证项目；IPv6、带宽等不继承 |
+| 路由器系统 | OpenWrt | RD03v2 原厂 2.0.28 |
+| MiniEAP 配置 | 示例启用 `rjv3` 插件 | 当前墙口使用标准 MiniEAP 即可认证 |
+| 服务管理 | OpenWrt 服务机制 | 原厂系统上的定制启动、关机及恢复流程 |
 
-相关项目中关于DNS、IPv6、吞吐、客户端限制或其他扩展路线的结论，不构成本项目的实测结果。
+本次参考其思路，文档和工具独立编写。南校园项目的 IPv6、吞吐和终端限制等结论，仍属于作者当时的环境；本项目的实测数据见[现场记录](docs/field-results.md)。
 
-## 直接代码来源
+核对的版本为 `be6990d3e34e39811db622aed32e8d088db9e8cb`，便于之后对照：
 
-本项目使用的MiniEAP上游、固定提交、补丁和许可证见[THIRD_PARTY.md](THIRD_PARTY.md)与[构建来源文件](third_party/minieap-source.json)。MiniEAP构建材料与本项目原创工具按其相应许可证处理。
+- [README](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/README.md)
+- [软件包 Makefile](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/Makefile)
+- [GPL v3](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/LICENSE)
+- [CC BY-NC-SA 4.0](https://github.com/RenAhsAcme/SYSU-Network-Solution/blob/be6990d3e34e39811db622aed32e8d088db9e8cb/LICENSE_CC)
 
-Npcap来自[Npcap官网](https://npcap.com/)，SDK行为参考其[开发文档](https://npcap.com/guide/npcap-devguide.html)。本项目不打包Npcap安装器、SDK或驱动。
+该版本同时附有两份许可证，未明确标注逐文件归属；这里通过链接和文字对照介绍它，未复制其代码、文档或图片。
 
-无线与排队改善的背景参考：[Intel对固定160MHz环境因素的说明](https://www.intel.com/content/www/us/en/support/articles/000092185/wireless.html)、[OpenWrt SQM文档](https://openwrt.org/docs/guide-user/network/traffic-shaping/sqm)。后者解释通用取舍，不代表本原厂固件已安装或支持CAKE/SQM。
+## 代码与工具来源
+
+- **MiniEAP**：上游、固定提交和补丁说明在 [THIRD_PARTY.md](THIRD_PARTY.md) 与[源码记录](third_party/minieap-source.json)。
+- **Npcap**：[官网](https://npcap.com/)和[开发文档](https://npcap.com/guide/npcap-devguide.html)。安装器和驱动需另行从官网获取。
+- **无线带宽**：[Intel 关于 160MHz 环境因素的说明](https://www.intel.com/content/www/us/en/support/articles/000092185/wireless.html)。
+- **负载下的延迟**：[OpenWrt SQM 文档](https://openwrt.org/docs/guide-user/network/traffic-shaping/sqm)，介绍队列管理的用途、CPU 开销和卸载取舍。
