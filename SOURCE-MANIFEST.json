@@ -81,8 +81,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 5284,
-      "sha256": "63eb50a97405306c0da8226030e43fa0f70a6d48757000062e3e72fc4e2325ce"
+      "bytes": 5311,
+      "sha256": "1c741987d49fd0338ea19e0f81c6848c26cb5bbd6b3979bd2dbce1dc5d2da23c"
     },
     {
       "path": "REFERENCES.md",
@@ -96,8 +96,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 4082,
-      "sha256": "cf7d84ebd6cc0b416c86859349d9abdf7dabf926ece99fa3d922ee88127fb81d"
+      "bytes": 4735,
+      "sha256": "50f6f1b209b8b8bf6f7bd8a953e26baa38d8cd69a747abbc9c56c83ca5469550"
     },
     {
       "path": "docs/architecture.md",
@@ -312,5 +312,22 @@
     "c_or_arm_build_reexecuted": false,
     "live_authentication_or_deployment_performed": false,
     "historical_tests_scope": "tests retains historical v0.2.3 validation; see VALIDATION.md"
+  },
+  "documentation_refresh": {
+    "phase": "prepublication_staged_checks",
+    "date": "2026-10-21",
+    "upstream_main_sha": "f2b50e67ae812d6534b2ec92f8fa16039491a7bd",
+    "readme_goal_updated": true,
+    "standardized_documentation_structure_preserved": true,
+    "inventory_files_checked": 53,
+    "inventory_source": "git_index_bytes",
+    "documentation_relative_links_checked": true,
+    "conflict_markers_checked": true,
+    "application_source_or_workflow_changed": false,
+    "python_tests_reexecuted": false,
+    "c_or_arm_build_reexecuted": false,
+    "live_authentication_or_deployment_performed": false,
+    "github_ci_executed": false,
+    "historical_tests_scope": "tests and documentation_maintenance retain prior records; this entry records only the current documentation refresh"
   }
 }
