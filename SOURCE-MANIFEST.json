@@ -1,7 +1,7 @@
 {
   "kind": "sanitized_source_distribution_v1",
   "edition": "sysu-shenzhen-rd03v2-stock",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "GPL-3.0",
   "runtime_credentials_included": false,
   "device_bound_once_controllers_included": false,
@@ -53,8 +53,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 2250,
-      "sha256": "67274d21306da1b526374923dc398d2a56b90a8ee5bfc9dbb3529a8c7a70af9a"
+      "bytes": 2452,
+      "sha256": "79a2a8f23c4353b789f6b0452eeda274f841312e99e8260f866df81632e6ecdd"
     },
     {
       "path": "docs/architecture.md",
@@ -63,8 +63,8 @@
     },
     {
       "path": "docs/field-results.md",
-      "bytes": 5698,
-      "sha256": "1087fe11172b4e9f8b5d310d6d5b87eeae5b0c9dc4b3262bfcefccccb7b49910"
+      "bytes": 5697,
+      "sha256": "150284439050cfedd184d07a79102118361d427d01ef465ba030096b72e1695a"
     },
     {
       "path": "docs/network-experience.md",
@@ -149,7 +149,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 348,
-      "sha256": "c385d48074d0190862fbcfa8a4d98f8f0c43c25e3778cb06a73e4b6de1b69aaf"
+      "sha256": "c51686246a6410e97d8d3f7af2828e94b709bd72777b0213578a79366711094a"
     },
     {
       "path": "scripts/build_minieap.sh",
