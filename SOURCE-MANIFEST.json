@@ -1,17 +1,29 @@
 {
   "kind": "sanitized_source_distribution_v1",
+  "edition": "sysu-shenzhen-rd03v2-stock",
+  "version": "0.2.0",
   "license": "GPL-3.0",
   "runtime_credentials_included": false,
   "device_bound_once_controllers_included": false,
   "binaries_included": false,
   "field_identifiers_included": false,
+  "scope": "one tested SYSU Shenzhen dormitory wall port; stock firmware retained; reference toolkit, not a complete installer",
   "tests": {
-    "python_tests_passed": 8,
-    "c_synthetic_assertions_passed": 103,
-    "c_address_and_cli_guards_passed": true,
-    "minieap_patch_dry_run_passed": true,
-    "live_capture_or_deployment_performed": false,
-    "stock_service_portable_tests_passed": 2
+    "python_tests_passed": 16,
+    "stock_service_portable_tests_passed": 2,
+    "profile_and_synthetic_cli_passed": true,
+    "live_capture_or_deployment_performed_in_this_revision": false,
+    "c_synthetic_assertions_historically_passed": 103,
+    "c_address_and_cli_guards_historically_passed": true,
+    "minieap_patch_dry_run_historically_passed": true,
+    "c_and_minieap_checks_reexecuted_in_this_revision": false
+  },
+  "field_observation": {
+    "result": "interrupted",
+    "recorded_seconds": 23716.172,
+    "successful_probe_pairs": 396,
+    "service_online_samples": 80,
+    "twenty_four_hours_passed": false
   },
   "files": [
     {
@@ -26,8 +38,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 3484,
-      "sha256": "2741682489b0194302818b1718e78a12c76f9ef6c0bfadb58b58aade57edb98d"
+      "bytes": 5908,
+      "sha256": "da2447e18f03fef774899e5b0f5bdfa53900f1f1c722b34f239059a2d4b0d796"
+    },
+    {
+      "path": "REFERENCES.md",
+      "bytes": 3513,
+      "sha256": "746f0cbedc90b9320fd5f5d54945ce483655d8e988c3e61521d6a122306f33ce"
     },
     {
       "path": "THIRD_PARTY.md",
@@ -36,8 +53,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 1529,
-      "sha256": "871c5b321bc2252465545d817a205335ea75785102d651961e12423220e3c481"
+      "bytes": 2250,
+      "sha256": "67274d21306da1b526374923dc398d2a56b90a8ee5bfc9dbb3529a8c7a70af9a"
     },
     {
       "path": "docs/architecture.md",
@@ -46,13 +63,23 @@
     },
     {
       "path": "docs/field-results.md",
-      "bytes": 4366,
-      "sha256": "170c5fd7bab650769ef2f5dd62d7dd2e312424917e15302e213effdb1ee36b5f"
+      "bytes": 5698,
+      "sha256": "1087fe11172b4e9f8b5d310d6d5b87eeae5b0c9dc4b3262bfcefccccb7b49910"
+    },
+    {
+      "path": "docs/network-experience.md",
+      "bytes": 5117,
+      "sha256": "7d64fc7332622838d31c9c7bc8a47827f51d0da5e7df2b506c8fadd29b893719"
     },
     {
       "path": "docs/security.md",
       "bytes": 1449,
       "sha256": "3b961737024bf2e167f5766ec88f07c2ff2e64aafe57dd4458e6f2dd06cfb52a"
+    },
+    {
+      "path": "docs/shenzhen-campus.md",
+      "bytes": 10042,
+      "sha256": "4d3b5044570c4a183ee433ce8397780fc6321864d142e2846385fff79d30a164"
     },
     {
       "path": "docs/troubleshooting.md",
@@ -115,9 +142,14 @@
       "sha256": "10ad0509961133d65a8d0f225374f85934f5220ae7ca337bfa45bad8d3ad0cb2"
     },
     {
+      "path": "profiles/sysu-shenzhen-rd03v2.json",
+      "bytes": 2219,
+      "sha256": "85929af5afffadf5f66897a34907a80441dfb1146ce48c14a7c31afc58466daf"
+    },
+    {
       "path": "pyproject.toml",
-      "bytes": 339,
-      "sha256": "406f7ce38681082de604b879f9c38db3d022711266d55f83b5962165340c102e"
+      "bytes": 348,
+      "sha256": "c385d48074d0190862fbcfa8a4d98f8f0c43c25e3778cb06a73e4b6de1b69aaf"
     },
     {
       "path": "scripts/build_minieap.sh",
@@ -190,6 +222,11 @@
       "sha256": "de07acabcca70f7bfe2cb0602cbfe70c8783dfc2d42086fbc0009ceddaecafcb"
     },
     {
+      "path": "tests/test_site_profile.py",
+      "bytes": 6649,
+      "sha256": "1bd298e5d472e8b4d11cf830b1a590980a43df214e5b554607c638df5fa47424"
+    },
+    {
       "path": "tests/test_templates.py",
       "bytes": 1215,
       "sha256": "ebdb694afc7271bb1d756779bd942b7131c4e46d59732809c2180254930108f2"
@@ -208,6 +245,11 @@
       "path": "tools/eap_metadata.py",
       "bytes": 9366,
       "sha256": "234b41cb229d5f864fbd90b56cabccc76e4f23c497cf560f5b9b329c10160322"
+    },
+    {
+      "path": "tools/site_profile.py",
+      "bytes": 14654,
+      "sha256": "adff835a9ed91dc4eff2176e65155dbf910e2a81ab48825da8dac2baf1b57067"
     }
   ]
 }
