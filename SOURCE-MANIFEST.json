@@ -40,9 +40,39 @@
       "sha256": "8c281b17a19dfc01356c58b9ff99f67a648e89624f7881a7c05e3760c953a13e"
     },
     {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "bytes": 617,
+      "sha256": "23f08e41782008a0da8d332fea788a94a54b4e711c1cbef3d2006bd9f897fcd8"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "bytes": 27,
+      "sha256": "13064e7bea658e01e718b414fbb7b3b244f36411fe25ee2055c151f7b534547a"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "bytes": 490,
+      "sha256": "c1b3a86c2ca01c6d7a19c2b08605ee92e49909d573e24a6137926e086e0ffe19"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 476,
+      "sha256": "1fd997c700f826f9fe55332e0bfc4f0c57d31e1d165db02b6b2c2fa5edef55d1"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 1116,
+      "sha256": "5b97d700af04b317ee6953f199839d7ef8c0595a2287944f08980eb99c0a99e1"
+    },
+    {
       "path": ".gitignore",
       "bytes": 207,
       "sha256": "04bd3ef0fb77d6d86f8544c904d22bc7985068b2652a1dfc57dcaa43cf9e9c61"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1815,
+      "sha256": "8ea75d94b2ca6ce70891ead696f41321fbcddc70dc9202d7173bdf22c097abc0"
     },
     {
       "path": "LICENSE",
@@ -51,8 +81,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4289,
-      "sha256": "71aac5273826789f51688c42bd8f8dccb04d6fe5e8603414298413dec8e53bdb"
+      "bytes": 5311,
+      "sha256": "1c741987d49fd0338ea19e0f81c6848c26cb5bbd6b3979bd2dbce1dc5d2da23c"
     },
     {
       "path": "REFERENCES.md",
@@ -66,8 +96,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 2605,
-      "sha256": "f61d91c444ecf4de9f01359eec19dab165d3baeec1ee62b8cc6fbc4041fffe05"
+      "bytes": 4735,
+      "sha256": "50f6f1b209b8b8bf6f7bd8a953e26baa38d8cd69a747abbc9c56c83ca5469550"
     },
     {
       "path": "docs/architecture.md",
@@ -269,5 +299,35 @@
       "bytes": 14654,
       "sha256": "adff835a9ed91dc4eff2176e65155dbf910e2a81ab48825da8dac2baf1b57067"
     }
-  ]
+  ],
+  "documentation_maintenance": {
+    "phase": "prepublication_local_checks",
+    "date": "2026-10-21",
+    "python_version": "3.9",
+    "python_tools_tests_passed": 16,
+    "service_renderer_tests_passed": 2,
+    "synthetic_and_site_profile_cli_passed": true,
+    "source_code_changed": false,
+    "github_ci_executed": false,
+    "c_or_arm_build_reexecuted": false,
+    "live_authentication_or_deployment_performed": false,
+    "historical_tests_scope": "tests retains historical v0.2.3 validation; see VALIDATION.md"
+  },
+  "documentation_refresh": {
+    "phase": "prepublication_staged_checks",
+    "date": "2026-10-21",
+    "upstream_main_sha": "f2b50e67ae812d6534b2ec92f8fa16039491a7bd",
+    "readme_goal_updated": true,
+    "standardized_documentation_structure_preserved": true,
+    "inventory_files_checked": 53,
+    "inventory_source": "git_index_bytes",
+    "documentation_relative_links_checked": true,
+    "conflict_markers_checked": true,
+    "application_source_or_workflow_changed": false,
+    "python_tests_reexecuted": false,
+    "c_or_arm_build_reexecuted": false,
+    "live_authentication_or_deployment_performed": false,
+    "github_ci_executed": false,
+    "historical_tests_scope": "tests and documentation_maintenance retain prior records; this entry records only the current documentation refresh"
+  }
 }
