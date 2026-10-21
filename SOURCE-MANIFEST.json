@@ -40,6 +40,26 @@
       "sha256": "8c281b17a19dfc01356c58b9ff99f67a648e89624f7881a7c05e3760c953a13e"
     },
     {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "bytes": 617,
+      "sha256": "23f08e41782008a0da8d332fea788a94a54b4e711c1cbef3d2006bd9f897fcd8"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "bytes": 27,
+      "sha256": "13064e7bea658e01e718b414fbb7b3b244f36411fe25ee2055c151f7b534547a"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "bytes": 490,
+      "sha256": "c1b3a86c2ca01c6d7a19c2b08605ee92e49909d573e24a6137926e086e0ffe19"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 476,
+      "sha256": "1fd997c700f826f9fe55332e0bfc4f0c57d31e1d165db02b6b2c2fa5edef55d1"
+    },
+    {
       "path": ".github/workflows/ci.yml",
       "bytes": 1116,
       "sha256": "5b97d700af04b317ee6953f199839d7ef8c0595a2287944f08980eb99c0a99e1"
@@ -51,8 +71,8 @@
     },
     {
       "path": "CONTRIBUTING.md",
-      "bytes": 1591,
-      "sha256": "8f12c03cd8f13a29584ed9379d15ebbeba4b81b98dfe8fc2b0bc8dbd3f08792e"
+      "bytes": 1815,
+      "sha256": "8ea75d94b2ca6ce70891ead696f41321fbcddc70dc9202d7173bdf22c097abc0"
     },
     {
       "path": "LICENSE",
@@ -61,8 +81,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4555,
-      "sha256": "a152e4c8e6913f96c1b4579cd2890bb7f464059bced64508ff91be57043a37e2"
+      "bytes": 5284,
+      "sha256": "63eb50a97405306c0da8226030e43fa0f70a6d48757000062e3e72fc4e2325ce"
     },
     {
       "path": "REFERENCES.md",
@@ -76,8 +96,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 3511,
-      "sha256": "1c9143e68d23e684e0b886f6b87c94307094928190904e3790f209adc604a5d9"
+      "bytes": 4082,
+      "sha256": "cf7d84ebd6cc0b416c86859349d9abdf7dabf926ece99fa3d922ee88127fb81d"
     },
     {
       "path": "docs/architecture.md",
