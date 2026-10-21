@@ -40,9 +40,19 @@
       "sha256": "8c281b17a19dfc01356c58b9ff99f67a648e89624f7881a7c05e3760c953a13e"
     },
     {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 1116,
+      "sha256": "5b97d700af04b317ee6953f199839d7ef8c0595a2287944f08980eb99c0a99e1"
+    },
+    {
       "path": ".gitignore",
       "bytes": 207,
       "sha256": "04bd3ef0fb77d6d86f8544c904d22bc7985068b2652a1dfc57dcaa43cf9e9c61"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1591,
+      "sha256": "8f12c03cd8f13a29584ed9379d15ebbeba4b81b98dfe8fc2b0bc8dbd3f08792e"
     },
     {
       "path": "LICENSE",
@@ -51,8 +61,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4289,
-      "sha256": "71aac5273826789f51688c42bd8f8dccb04d6fe5e8603414298413dec8e53bdb"
+      "bytes": 4555,
+      "sha256": "a152e4c8e6913f96c1b4579cd2890bb7f464059bced64508ff91be57043a37e2"
     },
     {
       "path": "REFERENCES.md",
@@ -66,8 +76,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 2605,
-      "sha256": "f61d91c444ecf4de9f01359eec19dab165d3baeec1ee62b8cc6fbc4041fffe05"
+      "bytes": 3511,
+      "sha256": "1c9143e68d23e684e0b886f6b87c94307094928190904e3790f209adc604a5d9"
     },
     {
       "path": "docs/architecture.md",
@@ -269,5 +279,18 @@
       "bytes": 14654,
       "sha256": "adff835a9ed91dc4eff2176e65155dbf910e2a81ab48825da8dac2baf1b57067"
     }
-  ]
+  ],
+  "documentation_maintenance": {
+    "phase": "prepublication_local_checks",
+    "date": "2026-10-21",
+    "python_version": "3.9",
+    "python_tools_tests_passed": 16,
+    "service_renderer_tests_passed": 2,
+    "synthetic_and_site_profile_cli_passed": true,
+    "source_code_changed": false,
+    "github_ci_executed": false,
+    "c_or_arm_build_reexecuted": false,
+    "live_authentication_or_deployment_performed": false,
+    "historical_tests_scope": "tests retains historical v0.2.3 validation; see VALIDATION.md"
+  }
 }

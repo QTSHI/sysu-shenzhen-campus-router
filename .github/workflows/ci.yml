@@ -1,0 +1,43 @@
+name: Verify tools
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Test parsers and public templates
+        run: python -m unittest discover -s tests -v
+      - name: Test service renderer
+        run: python -m unittest discover -s stock-service -p 'test_*.py' -v
+      - name: Validate synthetic example and site profile
+        run: |
+          python tools/eap_metadata.py --validate examples/synthetic.jsonl
+          python tools/site_profile.py --json
+
+  observer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build and test Linux observer
+        run: make -C linux-observer all test

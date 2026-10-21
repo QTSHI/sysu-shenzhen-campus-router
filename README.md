@@ -33,7 +33,14 @@
 
 ## 先运行工具
 
-在仓库根目录执行，需要 Python 3.9 或更新版本：
+需要 Python 3.9 或更新版本。首次下载后进入仓库：
+
+```sh
+git clone https://github.com/QTSHI/sysu-shenzhen-campus-router.git
+cd sysu-shenzhen-campus-router
+```
+
+在仓库根目录执行：
 
 ```sh
 python tools/eap_metadata.py --help
@@ -58,3 +65,5 @@ python tools/site_profile.py --json
 [RenAhsAcme/SYSU-Network-Solution](https://github.com/RenAhsAcme/SYSU-Network-Solution)介绍了广州南校园的 OpenWrt 方案。这次则记录深圳校区宿舍、RD03v2 原厂系统的做法，文档和工具独立编写。两套方案的系统、插件配置和服务管理方式有区别，见[来源与对照](REFERENCES.md)。
 
 学校官方资料、第三方代码与许可分别见 [REFERENCES.md](REFERENCES.md)、[THIRD_PARTY.md](THIRD_PARTY.md)。项目采用 [GPL v3](LICENSE)。账号、密钥和备份的保存建议放在[安全说明](docs/security.md)，常见问题见[故障排查](docs/troubleshooting.md)。
+
+开发检查和贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，已有验证记录见 [VALIDATION.md](VALIDATION.md)。
