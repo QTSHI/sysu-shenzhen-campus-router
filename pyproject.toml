@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sysu-rd03v2-campus-router"
-version = "0.2.2"
+version = "0.2.3"
 description = "SYSU Shenzhen campus stock-router case study and header-only EAPOL diagnostics"
 requires-python = ">=3.9"
 license = {file = "LICENSE"}

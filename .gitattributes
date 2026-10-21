@@ -1,0 +1,5 @@
+# Keep checked-out source bytes stable on Windows and Linux.
+* text=auto eol=lf
+# Preserve the existing fixture and upstream metadata byte-for-byte.
+examples/synthetic.jsonl -text
+third_party/minieap-source.json -text

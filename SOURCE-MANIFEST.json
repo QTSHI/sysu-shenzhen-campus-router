@@ -1,7 +1,7 @@
 {
   "kind": "sanitized_source_distribution_v1",
   "edition": "sysu-shenzhen-rd03v2-stock",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "GPL-3.0",
   "runtime_credentials_included": false,
   "device_bound_once_controllers_included": false,
@@ -16,11 +16,15 @@
     "c_synthetic_assertions_historically_passed": 103,
     "c_address_and_cli_guards_historically_passed": true,
     "minieap_patch_dry_run_historically_passed": true,
-    "c_and_minieap_checks_reexecuted_in_this_revision": false,
-    "documentation_only_revision": true,
-    "code_test_results_inherited_from": "v0.2.1; implementation unchanged",
-    "documentation_local_links_checked": 38,
-    "documented_offline_commands_checked": 4
+    "c_and_minieap_checks_reexecuted_in_this_revision": true,
+    "documentation_local_links_checked": 47,
+    "documented_offline_commands_checked": 4,
+    "documentation_and_checkout_rules_revision": true,
+    "fresh_autocrlf_true_checkout_byte_equal": true,
+    "python_and_stock_tests_reexecuted": true,
+    "minieap_fixed_archive_preparation_and_arm_build_passed": true,
+    "observer_native_tests_and_arm_build_passed": true,
+    "real_binary_digest_service_render_and_shell_syntax_passed": true
   },
   "field_observation": {
     "result": "interrupted",
@@ -31,9 +35,14 @@
   },
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 218,
+      "sha256": "8c281b17a19dfc01356c58b9ff99f67a648e89624f7881a7c05e3760c953a13e"
+    },
+    {
       "path": ".gitignore",
-      "bytes": 181,
-      "sha256": "b531c3b8416e16c767ab4dd0b0b76b9617bddf8a5f57e37e5672fdac547fedfb"
+      "bytes": 207,
+      "sha256": "04bd3ef0fb77d6d86f8544c904d22bc7985068b2652a1dfc57dcaa43cf9e9c61"
     },
     {
       "path": "LICENSE",
@@ -42,8 +51,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 4123,
-      "sha256": "03d8e9b6b6e6ded679682dc3e5c9a87a0e142d204e18f128ad21291889075233"
+      "bytes": 4289,
+      "sha256": "71aac5273826789f51688c42bd8f8dccb04d6fe5e8603414298413dec8e53bdb"
     },
     {
       "path": "REFERENCES.md",
@@ -57,8 +66,8 @@
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 1699,
-      "sha256": "010544d13db77d11402da8d240577cc2c4a8d0cdfd73f29a8575abf70986dc6d"
+      "bytes": 2605,
+      "sha256": "f61d91c444ecf4de9f01359eec19dab165d3baeec1ee62b8cc6fbc4041fffe05"
     },
     {
       "path": "docs/architecture.md",
@@ -69,6 +78,11 @@
       "path": "docs/field-results.md",
       "bytes": 3912,
       "sha256": "afeabfb2479ce261af41f9071691b857c110296ce5975fe07dfc105ab9dc49c5"
+    },
+    {
+      "path": "docs/getting-started.md",
+      "bytes": 16638,
+      "sha256": "251a3ce17b4c11a708446c3b0f640117ccf1ababa529c46cf8bcd76173ce8495"
     },
     {
       "path": "docs/network-experience.md",
@@ -92,8 +106,8 @@
     },
     {
       "path": "docs/usage.md",
-      "bytes": 4736,
-      "sha256": "d33ac8e58faa2b81fc3bf2d49d45e91390e0c49139b160b660f8e37001780253"
+      "bytes": 4871,
+      "sha256": "62486645bbdd476de6eafd11b60d021c3517216997aa75e42ff42cb910014337"
     },
     {
       "path": "examples/synthetic.jsonl",
@@ -153,7 +167,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 348,
-      "sha256": "50ffd16f477b0a7340e161692cca9888b60aee016f6a905cb1e7c0e51a2fb386"
+      "sha256": "ff540d8e41b0d5a6b859fcaaae84dbd8cce38d4ba536d450a0a593691029c181"
     },
     {
       "path": "scripts/build_minieap.sh",

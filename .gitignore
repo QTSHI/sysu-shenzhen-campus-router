@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 build/
+linux-observer/build-arm/
 dist/
 out/
 .env*

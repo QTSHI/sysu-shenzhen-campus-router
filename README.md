@@ -12,6 +12,8 @@
 
 ## 先看哪一篇
 
+**第一次下载这个仓库？从[一步步实操教程](docs/getting-started.md)开始。** 每一步都标明在哪个窗口执行、应该看到什么结果。
+
 - **想知道怎么接通的**：[深圳校区接入过程](docs/shenzhen-campus.md)。从电脑锐捷验证讲到一根网线的接法、路由器认证和日常使用。
 - **想排查自己的线路**：[工具使用与构建](docs/usage.md)。包含 Windows 协议头采集、Linux 观察器和 MiniEAP 构建。
 - **想看认证服务怎么写**：[服务源码说明](stock-service/README.md)和[运行流程](docs/architecture.md)。
